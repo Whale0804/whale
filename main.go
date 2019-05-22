@@ -1,9 +1,8 @@
 package main
 
 import (
-	_ "github.com/githinkcn/whale/whale/routers"
-
 	"github.com/astaxie/beego"
+	_ "github.com/githinkcn/whale/routers"
 )
 
 func main() {

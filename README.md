@@ -1,3 +1,1 @@
-# whale
-
-鲸云 ——云存储，云文档平台。
+![](./screenshot/logo_big.png)

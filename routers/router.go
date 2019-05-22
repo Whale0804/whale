@@ -8,7 +8,7 @@
 package routers
 
 import (
-	"github.com/githinkcn/whale/whale/controllers"
+	"github.com/githinkcn/whale/controllers"
 
 	"github.com/astaxie/beego"
 )
