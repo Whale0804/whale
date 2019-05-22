@@ -10,6 +10,7 @@ require (
 	github.com/couchbase/go-couchbase v0.0.0-20190515160915-dcefcb68da4a // indirect
 	github.com/couchbase/gomemcached v0.0.0-20190515232915-c4b4ca0eb21d // indirect
 	github.com/couchbase/goutils v0.0.0-20190315194238-f9d42b11473b // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/edsrzf/mmap-go v1.0.0 // indirect
 	github.com/go-redis/redis v6.15.2+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.4.1
