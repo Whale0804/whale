@@ -8,18 +8,12 @@
 package routers
 
 import (
-	"github.com/githinkcn/whale/controllers"
-
 	"github.com/astaxie/beego"
+	"github.com/githinkcn/whale/controllers"
 )
 
 func init() {
 	ns := beego.NewNamespace("/v1",
-		beego.NSNamespace("/object",
-			beego.NSInclude(
-				&controllers.ObjectController{},
-			),
-		),
 		beego.NSNamespace("/user",
 			beego.NSInclude(
 				&controllers.UserController{},
