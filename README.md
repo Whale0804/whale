@@ -1,3 +1,3 @@
 <div align=center> 
-![](./screenshot/logo_big.png)
+    <img src="./screenshot/logo_big.png"/>
 </div>
