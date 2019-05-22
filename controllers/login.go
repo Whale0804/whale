@@ -1,12 +1,6 @@
 package controllers
 
-import (
-	"encoding/json"
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/validation"
-	"github.com/githinkcn/whale/models"
-	"log"
-)
+import ()
 
 type LoginController struct {
 	BaseController
