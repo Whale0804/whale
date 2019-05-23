@@ -11,6 +11,7 @@ type BaseController struct {
 	beego.Controller
 }
 
+//封装返回体
 func (self *BaseController) Resp(code int, msg string, data ...interface{}) {
 	out := make(map[string]interface{})
 	out["code"] = code
@@ -31,14 +32,16 @@ func (this *BaseController) GenToken(Uid int, Uname string) (string, error) {
 }
 
 //验证token
-func (this *BaseController) ValidToken() (int, bool, error) {
+func (this *BaseController) ValidToken() (*utils.WhaleClaims, bool, error) {
 	authorization := strings.TrimSpace(this.Ctx.Request.Header.Get("Authorization"))
 	if authorization == "" {
-		return 0, false, errors.New("Authorization is empty")
+		return nil, false, errors.New("Authorization is empty")
 	}
 	tokenString := strings.TrimSpace(authorization[len("Bearer "):])
 	if claims, isValid, err := utils.ParaseToken(tokenString); err == nil && isValid {
-		return claims.Uid, true, nil
+		return claims, true, nil
 	}
-	return 0, false, errors.New("Authorization invalid")
+	return nil, false, errors.New("Authorization invalid")
 }
+
+//
