@@ -9,7 +9,8 @@ import (
 )
 
 type WhaleClaims struct {
-	Uid int `json: "uid"`
+	Uid   int    `json: "uid"`
+	Uname string `json: "uname"`
 	jwt.StandardClaims
 }
 
@@ -27,10 +28,11 @@ func ParaseToken(authorization string) (*WhaleClaims, bool, error) {
 	return nil, false, errors.New("token invalid")
 }
 
-func GenToken(uId int) (string, error) {
+func GenToken(uid int, uname string) (string, error) {
 	expireToken := time.Now().Add(time.Hour * 24).Unix()
 	claims := WhaleClaims{
-		uId,
+		uid,
+		uname,
 		jwt.StandardClaims{
 			ExpiresAt: expireToken,
 			Issuer:    "www.whale4cloud.com",

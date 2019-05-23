@@ -1,12 +1,12 @@
 package controllers
 
 import (
-	"github.com/astaxie/beego"
+	"time"
 )
 
 // Operations about Users
 type UserController struct {
-	beego.Controller
+	BaseController
 }
 
 // @Title CreateUser
@@ -65,7 +65,18 @@ func (u *UserController) Delete() {
 // @Success 200 {string} login success
 // @Failure 403 user not exist
 // @router /login [get]
-func (u *UserController) Login() {
+func (this *UserController) Login() {
+	username := this.Input().Get("username")
+	password := this.Input().Get("password")
+
+	if username == "mzk" && password == "123456" {
+		if token, ok := this.GenToken(int(time.Now().Unix()), username); ok == nil {
+			this.Resp(0, "success", map[string]interface{}{
+				"token": token,
+			})
+		}
+
+	}
 
 }
 
@@ -73,6 +84,6 @@ func (u *UserController) Login() {
 // @Description Logs out current logged in user session
 // @Success 200 {string} logout success
 // @router /logout [get]
-func (u *UserController) Logout() {
+func (this *UserController) Logout() {
 
 }

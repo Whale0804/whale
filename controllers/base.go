@@ -11,17 +11,6 @@ type BaseController struct {
 	beego.Controller
 }
 
-type TokenCheckController struct {
-	Id       int
-	Username string
-	RawToken string
-	BaseController
-}
-
-// 固定返回的json数据格式
-// code: 错误码
-// msg: 错误信息
-// data: 返回数据
 func (self *BaseController) Resp(code int, msg string, data ...interface{}) {
 	out := make(map[string]interface{})
 	out["code"] = code
@@ -37,8 +26,8 @@ func (self *BaseController) Resp(code int, msg string, data ...interface{}) {
 }
 
 //生成token
-func (this *BaseController) GenToken(Uid int) (string, error) {
-	return utils.GenToken(Uid)
+func (this *BaseController) GenToken(Uid int, Uname string) (string, error) {
+	return utils.GenToken(Uid, Uname)
 }
 
 //验证token
@@ -47,7 +36,8 @@ func (this *BaseController) ValidToken() (int, bool, error) {
 	if authorization == "" {
 		return 0, false, errors.New("Authorization is empty")
 	}
-	if claims, isValid, err := utils.ParaseToken(authorization); err == nil && isValid {
+	tokenString := strings.TrimSpace(authorization[len("Bearer "):])
+	if claims, isValid, err := utils.ParaseToken(tokenString); err == nil && isValid {
 		return claims.Uid, true, nil
 	}
 	return 0, false, errors.New("Authorization invalid")
