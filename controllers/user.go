@@ -14,6 +14,7 @@ type UserController struct {
 // @Failure 403 body is empty
 // @router / [post]
 func (this *UserController) Post() {
+
 	claims, _, _ := this.ValidToken()
 	this.Resp(0, "success", map[string]interface{}{
 		"username": claims.Uname,

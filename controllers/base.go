@@ -10,6 +10,17 @@ import (
 
 type BaseController struct {
 	beego.Controller
+	username string
+	userId   int
+}
+
+func (this *BaseController) Prepare() {
+	if user, isValid, err := this.ValidToken(); err == nil && !isValid {
+		this.username = user.Uname
+		this.userId = user.Uid
+	} else {
+		this.Resp(401, "请登录后访问")
+	}
 }
 
 //封装返回体

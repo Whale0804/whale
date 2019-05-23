@@ -19,11 +19,11 @@ func init() {
 	var FilterAuth = func(ctx *context.Context) {
 		authorization := strings.TrimSpace(ctx.Request.Header.Get("Authorization"))
 		if authorization == "" {
-			ctx.Output.JSON(map[string]interface{}{"code": 1, "msg": "请登录后访问"}, true, true)
+			ctx.Output.JSON(map[string]interface{}{"code": 401, "msg": "请登录后访问"}, true, true)
 		}
 		tokenString := strings.TrimSpace(authorization[len("Bearer "):])
 		if _, isValid, err := utils.ParaseToken(tokenString); err == nil && !isValid {
-			ctx.Output.JSON(map[string]interface{}{"code": 1, "msg": "请登录后访问"}, true, true)
+			ctx.Output.JSON(map[string]interface{}{"code": 401, "msg": "请登录后访问"}, true, true)
 		}
 	}
 	ns := beego.NewNamespace("/v1",
