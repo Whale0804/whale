@@ -1,5 +1,7 @@
 package controllers
 
+import "github.com/githinkcn/whale/utils"
+
 // Operations about Users
 type UserController struct {
 	BaseController
@@ -15,7 +17,8 @@ func (this *UserController) Post() {
 	claims, _, _ := this.ValidToken()
 	this.Resp(0, "success", map[string]interface{}{
 		"username": claims.Uname,
-		"userId":   claims.Uid,
+		"userId":   this.GetId(),
+		"del_flag": utils.DEL_NORMAL,
 	})
 }
 

@@ -5,6 +5,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/githinkcn/whale/utils"
 	"strings"
+	"time"
 )
 
 type BaseController struct {
@@ -44,4 +45,7 @@ func (this *BaseController) ValidToken() (*utils.WhaleClaims, bool, error) {
 	return nil, false, errors.New("Authorization invalid")
 }
 
-//
+//获取Id
+func (this *BaseController) GetId() int {
+	return int(time.Now().Unix())
+}
