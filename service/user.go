@@ -17,3 +17,7 @@ func (us *UserService) FindByUserName(name string) (user models.User, err error)
 func (us *UserService) NewUser(dto *entity.UserAddDto) (id int, err error) {
 	return us.dao.NewUser(dto)
 }
+
+func (us *UserService) FindByPhone(loginname string) (user models.User, err error) {
+	return us.dao.FindByPhone(loginname)
+}
