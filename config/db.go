@@ -21,3 +21,7 @@ func InitDB() {
 	orm.RegisterDataBase("default", DB_DRIVER,
 		username+":"+password+"@tcp("+url+")/"+db+"?charset=utf8", 30)
 }
+
+const (
+	USER_TABLE = "whale_user"
+)

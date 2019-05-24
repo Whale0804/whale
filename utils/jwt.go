@@ -41,3 +41,12 @@ func GenToken(uid int, uname string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(beego.AppConfig.String("authKey")))
 }
+func GenerateRefreshJwtWithToken(token string) (string, error) {
+
+	return "", nil
+}
+
+//获取Id
+func GetId() int {
+	return int(time.Now().Unix())
+}

@@ -3,9 +3,11 @@ package controllers
 import (
 	"errors"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/validation"
+	"github.com/githinkcn/whale/common"
 	"github.com/githinkcn/whale/utils"
+	"reflect"
 	"strings"
-	"time"
 )
 
 type BaseController struct {
@@ -15,12 +17,12 @@ type BaseController struct {
 }
 
 func (this *BaseController) Prepare() {
-	if user, isValid, err := this.ValidToken(); err == nil && !isValid {
-		this.username = user.Uname
-		this.userId = user.Uid
-	} else {
-		this.Resp(401, "请登录后访问")
-	}
+	//if user, isValid, err := this.ValidToken(); err == nil && !isValid {
+	//	this.username = user.Uname
+	//	this.userId = user.Uid
+	//} else {
+	//	this.Resp(401, "请登录后访问")
+	//}
 }
 
 //封装返回体
@@ -56,7 +58,32 @@ func (this *BaseController) ValidToken() (*utils.WhaleClaims, bool, error) {
 	return nil, false, errors.New("Authorization invalid")
 }
 
-//获取Id
-func (this *BaseController) GetId() int {
-	return int(time.Now().Unix())
+// 解析并验证表单，返回第一个错误信息
+func (b *BaseController) ParseAndValidateFirstErr(obj interface{}) error {
+	if err := b.ParseForm(obj); err != nil {
+		return err
+	}
+	valid := &validation.Validation{}
+	if v, _ := valid.Valid(obj); !v {
+		// stuctTag
+		tags := make(map[string]interface{})
+		s := reflect.TypeOf(obj).Elem()
+		for i := 0; i < s.NumField(); i++ {
+			tags[s.Field(i).Name] = s.Field(i).Tag.Get("form")
+		}
+		for _, err := range valid.Errors {
+			return errors.New(tags[err.Field].(string) + ":" + err.Message)
+		}
+	}
+
+	return nil
+}
+
+func (self *BaseController) Fail(errs *common.ControllerError, moreErrInfo ...string) {
+	self.Data["json"] = errs
+	errs.Moreinfo = ""
+	for _, v := range moreErrInfo {
+		errs.Moreinfo += v + " // "
+	}
+	self.ServeJSON()
 }

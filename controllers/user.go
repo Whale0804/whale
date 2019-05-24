@@ -1,6 +1,11 @@
 package controllers
 
-import "github.com/githinkcn/whale/utils"
+import (
+	"encoding/json"
+	"github.com/githinkcn/whale/common"
+	"github.com/githinkcn/whale/entity"
+	"github.com/githinkcn/whale/service"
+)
 
 // Operations about Users
 type UserController struct {
@@ -14,12 +19,17 @@ type UserController struct {
 // @Failure 403 body is empty
 // @router / [post]
 func (this *UserController) Post() {
+	userAddDto := &entity.UserAddDto{}
+	json.Unmarshal(this.Ctx.Input.RequestBody, &userAddDto)
+	userService := service.UserService{}
+	if _, err := userService.FindByUserName(userAddDto.Username); err == nil {
+		this.Fail(common.ErrDupRecord, "用户已存在")
+		return
+	}
+	id, _ := userService.NewUser(userAddDto)
 
-	claims, _, _ := this.ValidToken()
 	this.Resp(0, "success", map[string]interface{}{
-		"username": claims.Uname,
-		"userId":   this.GetId(),
-		"del_flag": utils.DEL_NORMAL,
+		"id": id,
 	})
 }
 
