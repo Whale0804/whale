@@ -9,9 +9,11 @@ import (
 )
 
 func init() {
+
 	config.InitDB()
 	orm.Debug = true
 	orm.RunSyncdb("default", false, true)
+	config.InitRedis()
 }
 
 func Execute() {

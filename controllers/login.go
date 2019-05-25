@@ -2,10 +2,15 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/astaxie/beego"
 	"github.com/githinkcn/whale/common"
+	"github.com/githinkcn/whale/config"
 	"github.com/githinkcn/whale/entity"
 	"github.com/githinkcn/whale/service"
 	"github.com/githinkcn/whale/utils"
+	"strconv"
+	"time"
 )
 
 // Operations about Login
@@ -66,6 +71,10 @@ func (this *LoginController) Login() {
 		this.Resp(0, "success", map[string]interface{}{
 			"token": token,
 		})
+		//redis 存储 jwt
+		t, _ := strconv.Atoi(beego.AppConfig.String("authTime"))
+		_ = config.Cache.Put("login:"+user.Loginname, token, time.Duration(t)*time.Second)
+		fmt.Println(string(config.Cache.Get("login:" + user.Loginname).([]byte)))
 	}
 
 }
