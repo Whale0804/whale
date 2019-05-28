@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/validation"
 	"github.com/githinkcn/whale/common"
@@ -80,10 +81,12 @@ func (b *BaseController) ParseAndValidateFirstErr(obj interface{}) error {
 }
 
 func (self *BaseController) Fail(errs *common.ControllerError, moreErrInfo ...string) {
+
 	self.Data["json"] = errs
+	fmt.Println(self.Data)
 	errs.Moreinfo = ""
 	for _, v := range moreErrInfo {
-		errs.Moreinfo += v + " // "
+		errs.Moreinfo += v
 	}
 	self.ServeJSON()
 }

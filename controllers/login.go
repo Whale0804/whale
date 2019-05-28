@@ -48,8 +48,6 @@ func (this *LoginController) Register() {
 // @Failure 403 user not exist
 // @router /login [post]
 func (this *LoginController) Login() {
-	fmt.Println("1111")
-	fmt.Println(1 << 22)
 	loginDto := &entity.LoginDto{}
 	json.Unmarshal(this.Ctx.Input.RequestBody, &loginDto)
 	userService := service.UserService{}
@@ -72,6 +70,7 @@ func (this *LoginController) Login() {
 	if token, ok := this.GenToken(user.Id, user.Loginname); ok == nil {
 		this.Resp(0, "success", map[string]interface{}{
 			"token": token,
+			"user":  user,
 		})
 		//redis 存储 jwt
 		t, _ := strconv.Atoi(beego.AppConfig.String("authTime"))
