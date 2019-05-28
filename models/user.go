@@ -9,6 +9,7 @@ type User struct {
 	Loginname  string    `json:"login_name" orm:"column(login_name)" description:"登录名"`
 	Username   string    `json:"user_name" orm:"column(user_name);null" description:"用户名"`
 	Password   string    `json:"-" description:"密码"`
+	Salt       string    `json:"_"`
 	Email      string    `json:"email" description:"用户名"`
 	Sex        int       `json:"sex" orm:"default(0)" description:"用户名"`
 	Phone      string    `json:"phone" orm:"size(11);null" description:"手机号"`

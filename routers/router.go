@@ -26,11 +26,11 @@ func init() {
 				ctx.Output.JSON(map[string]interface{}{"code": 401, "msg": "请登录后访问"}, true, true)
 			}
 			tokenString := strings.TrimSpace(authorization[len("Bearer "):])
-			if userInfo, isValid, err := utils.ParaseToken(tokenString); err == nil && !isValid {
+			if userInfo, isValid, err := utils.ParaseToken(tokenString); err == nil && isValid {
 				fmt.Println(userInfo.Uname)
 				if config.Cache.IsExist("login:" + userInfo.Uname) {
 					v := string(config.Cache.Get("login:" + userInfo.Uname).([]byte))
-					if redisUserInfo, isValidRedis, errRedis := utils.ParaseToken(v); errRedis == nil && !isValidRedis {
+					if redisUserInfo, isValidRedis, errRedis := utils.ParaseToken(v); errRedis == nil && isValidRedis {
 						if redisUserInfo.Uname != userInfo.Uname || redisUserInfo.Uid != userInfo.Uid {
 							ctx.Output.JSON(map[string]interface{}{"code": 401, "msg": "请登录后访问"}, true, true)
 						}
@@ -50,6 +50,11 @@ func init() {
 		beego.NSNamespace("/auth",
 			beego.NSInclude(
 				&controllers.LoginController{},
+			),
+		),
+		beego.NSNamespace("/file",
+			beego.NSInclude(
+				&controllers.FileController{},
 			),
 		),
 		beego.NSNamespace("/user",

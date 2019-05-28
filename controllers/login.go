@@ -48,6 +48,8 @@ func (this *LoginController) Register() {
 // @Failure 403 user not exist
 // @router /login [post]
 func (this *LoginController) Login() {
+	fmt.Println("1111")
+	fmt.Println(1 << 22)
 	loginDto := &entity.LoginDto{}
 	json.Unmarshal(this.Ctx.Input.RequestBody, &loginDto)
 	userService := service.UserService{}
