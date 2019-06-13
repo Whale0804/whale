@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/validation"
 	"github.com/githinkcn/whale/common"
 	"github.com/githinkcn/whale/utils"
@@ -12,18 +13,14 @@ import (
 )
 
 type BaseController struct {
+	ctx *context.Context
 	beego.Controller
 	username string
 	userId   int
 }
 
 func (this *BaseController) Prepare() {
-	//if user, isValid, err := this.ValidToken(); err == nil && !isValid {
-	//	this.username = user.Uname
-	//	this.userId = user.Uid
-	//} else {
-	//	this.Resp(401, "请登录后访问")
-	//}
+
 }
 
 //封装返回体
