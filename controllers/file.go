@@ -25,6 +25,7 @@ func (this *FileController) Upload() {
 	}
 	fmt.Println("文件名称:")
 	fmt.Println(fileName)
+	fmt.Println(h.Size)
 	//关闭上传的文件，不然的话会出现临时文件不能清除的情况
 	f.Close()
 }
