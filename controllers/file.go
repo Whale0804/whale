@@ -2,7 +2,10 @@ package controllers
 
 import (
 	"fmt"
-	"strings"
+	"github.com/githinkcn/whale/entity"
+	"github.com/githinkcn/whale/utils"
+	"io/ioutil"
+	"os"
 )
 
 // Operations about Login
@@ -16,16 +19,32 @@ type FileController struct {
 // @router /upload [post]
 func (this *FileController) Upload() {
 	f, h, _ := this.GetFile("file")
+	name := this.GetString("name")
+	fileDto := entity.FileAddDto{}
+	if err := this.ParseForm(&fileDto); err != nil {
+		fmt.Printf("解析FormData失败：%s", err)
+	}
+	fmt.Println(fileDto)
+	//exist, _ :=utils.PathExists("")
+	fmt.Println(name)
 	//得到文件的名称
 	fileName := h.Filename
-	arr := strings.Split(fileName, ":")
-	if len(arr) > 1 {
-		index := len(arr) - 1
-		fileName = arr[index]
-	}
-	fmt.Println("文件名称:")
-	fmt.Println(fileName)
-	fmt.Println(h.Size)
 	//关闭上传的文件，不然的话会出现临时文件不能清除的情况
-	f.Close()
+	defer f.Close()
+	if utils.FileExists("D:/whale/" + fileName) {
+		fp, err := os.OpenFile("D:/whale/"+fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm)
+		defer fp.Close()
+		if err != nil {
+
+		}
+		b, err := ioutil.ReadAll(f)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fp.Write(b)
+	} else {
+		this.SaveToFile("file", "D:/whale/"+fileName)
+	}
+	this.Resp(0, "success", map[string]interface{}{})
 }

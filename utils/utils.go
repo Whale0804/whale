@@ -7,6 +7,8 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"io"
+	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -73,4 +75,34 @@ func Base64Decode(str string) (string, error) {
 	var src []byte = []byte(str)
 	by, err := coder.DecodeString(string(src))
 	return strings.Replace(strings.Replace(string(by), hashFunctionHeader, "", -1), hashFunctionFooter, "", -1), err
+}
+
+func PathExists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}
+
+func FileExists(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true
+	}
+	if os.IsNotExist(err) {
+		return false
+	}
+
+	return false
+}
+
+func GetCurrentPath() string {
+	s, _ := exec.LookPath(os.Args[0])
+	i := strings.LastIndex(s, "\\")
+	path := string(s[0 : i+1])
+	return path
 }

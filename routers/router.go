@@ -48,20 +48,28 @@ func init() {
 			}
 		}
 	}
+	var FinishRouter = func(ctx *context.Context) {
+		ctx.ResponseWriter.Header().Add("whale4Cloud-Version", beego.AppConfig.String("version"))
+		ctx.ResponseWriter.Header().Add("whale4Cloud-Site", "https://www.whale4cloud.com")
+		ctx.ResponseWriter.Header().Add("X-XSS-Protection", "1; mode=block")
+	}
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/auth",
+			beego.NSBefore(FinishRouter),
 			beego.NSInclude(
 				&controllers.LoginController{},
 			),
 		),
 		beego.NSNamespace("/file",
 			beego.NSBefore(FilterAuth),
+			beego.NSBefore(FinishRouter),
 			beego.NSInclude(
 				&controllers.FileController{},
 			),
 		),
 		beego.NSNamespace("/user",
 			beego.NSBefore(FilterAuth),
+			beego.NSBefore(FinishRouter),
 			beego.NSInclude(
 				&controllers.UserController{},
 			),
