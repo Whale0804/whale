@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/githinkcn/whale/entity"
-	"github.com/githinkcn/whale/utils"
 	"io/ioutil"
+	"log"
 	"os"
+	"strconv"
 )
 
 // Operations about Login
@@ -18,33 +20,45 @@ type FileController struct {
 // @Success 200 {string} logout success
 // @router /upload [post]
 func (this *FileController) Upload() {
-	f, h, _ := this.GetFile("file")
-	name := this.GetString("name")
+	f, _, err := this.GetFile("file")
+	if err != nil {
+		log.Fatal("getfile err ", err)
+	}
+	defer f.Close()
+
 	fileDto := entity.FileAddDto{}
 	if err := this.ParseForm(&fileDto); err != nil {
 		fmt.Printf("解析FormData失败：%s", err)
 	}
-	fmt.Println(fileDto)
-	//exist, _ :=utils.PathExists("")
-	fmt.Println(name)
-	//得到文件的名称
-	fileName := h.Filename
-	//关闭上传的文件，不然的话会出现临时文件不能清除的情况
-	defer f.Close()
-	if utils.FileExists("D:/whale/" + fileName) {
-		fp, err := os.OpenFile("D:/whale/"+fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm)
-		defer fp.Close()
-		if err != nil {
-
-		}
-		b, err := ioutil.ReadAll(f)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		fp.Write(b)
-	} else {
-		this.SaveToFile("file", "D:/whale/"+fileName)
+	filePath := "/Users/githink/Downloads/whale/" + fileDto.Id + "/"
+	err1 := os.MkdirAll(filePath, os.ModePerm)
+	if err1 != nil {
+		fmt.Println(err1)
 	}
+	this.SaveToFile("file", filePath+strconv.Itoa(fileDto.Chunk))
+	this.Resp(0, "success", map[string]interface{}{
+		"data":     fileDto,
+		"filePath": filePath,
+	})
+}
+
+// @Title register
+// @Description Register current logged in user session
+// @Success 200 {string} logout success
+// @router /finish [post]
+func (this *FileController) UploadFinish() {
+	dto := &entity.FinishUploadDto{}
+	json.Unmarshal(this.Ctx.Input.RequestBody, &dto)
+	fmt.Println(dto)
+	ab, err := os.Create("/Users/githink/Downloads/whale/" + dto.Name)
+	fmt.Println(err)
+	for i := 0; i < dto.Chunks; i++ {
+		f, _ := os.OpenFile(dto.Path+strconv.Itoa(i), os.O_RDONLY, os.ModePerm)
+		b, _ := ioutil.ReadAll(f)
+		ab.Write(b)
+		f.Close()
+		os.Remove(dto.Path + strconv.Itoa(i))
+	}
+	os.RemoveAll(dto.Path)
 	this.Resp(0, "success", map[string]interface{}{})
 }

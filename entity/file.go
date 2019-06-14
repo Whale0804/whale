@@ -9,3 +9,8 @@ type FileAddDto struct {
 	Chunk  int    `form:"chunk"`
 	Md5    string `form:"md5"`
 }
+type FinishUploadDto struct {
+	Name   string `form:"name"`
+	Chunks int    `form:"chunks"`
+	Path   string `form:"path"`
+}
