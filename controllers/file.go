@@ -15,7 +15,7 @@ type FileController struct {
 	BaseController
 }
 
-// @Title register
+// @Title 文件上传
 // @Description Register current logged in user session
 // @Success 200 {string} logout success
 // @router /upload [post]
@@ -30,7 +30,7 @@ func (this *FileController) Upload() {
 	if err := this.ParseForm(&fileDto); err != nil {
 		fmt.Printf("解析FormData失败：%s", err)
 	}
-	filePath := "/Users/githink/Downloads/whale/" + fileDto.Id + "/"
+	filePath := "./whale/" + fileDto.Id + "/"
 	err1 := os.MkdirAll(filePath, os.ModePerm)
 	if err1 != nil {
 		fmt.Println(err1)
@@ -42,7 +42,7 @@ func (this *FileController) Upload() {
 	})
 }
 
-// @Title register
+// @Title 通知合并
 // @Description Register current logged in user session
 // @Success 200 {string} logout success
 // @router /finish [post]
@@ -50,7 +50,7 @@ func (this *FileController) UploadFinish() {
 	dto := &entity.FinishUploadDto{}
 	json.Unmarshal(this.Ctx.Input.RequestBody, &dto)
 	fmt.Println(dto)
-	ab, err := os.Create("/Users/githink/Downloads/whale/" + dto.Name)
+	ab, err := os.Create("./whale/" + dto.Name)
 	fmt.Println(err)
 	for i := 0; i < dto.Chunks; i++ {
 		f, _ := os.OpenFile(dto.Path+strconv.Itoa(i), os.O_RDONLY, os.ModePerm)
@@ -60,5 +60,15 @@ func (this *FileController) UploadFinish() {
 		os.Remove(dto.Path + strconv.Itoa(i))
 	}
 	os.RemoveAll(dto.Path)
+	defer ab.Close()
+	this.Resp(0, "success", map[string]interface{}{})
+}
+
+// @Title 秒传
+// @Description Register current logged in user session
+// @Success 200 {string} logout success
+// @router /check [post]
+func (this *FileController) CheckFile() {
+	fmt.Println(this.GetString("md5"))
 	this.Resp(0, "success", map[string]interface{}{})
 }
