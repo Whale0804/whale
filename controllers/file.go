@@ -3,11 +3,13 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/astaxie/beego"
 	"github.com/githinkcn/whale/entity"
 	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
+	"strings"
 )
 
 // Operations about Login
@@ -30,15 +32,15 @@ func (this *FileController) Upload() {
 	if err := this.ParseForm(&fileDto); err != nil {
 		fmt.Printf("解析FormData失败：%s", err)
 	}
-	filePath := "./whale/" + fileDto.Id + "/"
+	filePath := beego.AppConfig.String("whale_path") + fileDto.Id + "/"
+	fileDto.Path = filePath
 	err1 := os.MkdirAll(filePath, os.ModePerm)
 	if err1 != nil {
 		fmt.Println(err1)
 	}
 	this.SaveToFile("file", filePath+strconv.Itoa(fileDto.Chunk))
 	this.Resp(0, "success", map[string]interface{}{
-		"data":     fileDto,
-		"filePath": filePath,
+		"data": fileDto,
 	})
 }
 
@@ -50,16 +52,15 @@ func (this *FileController) UploadFinish() {
 	dto := &entity.FinishUploadDto{}
 	json.Unmarshal(this.Ctx.Input.RequestBody, &dto)
 	fmt.Println(dto)
-	ab, err := os.Create("./whale/" + dto.Name)
-	fmt.Println(err)
+	ab, _ := os.Create(beego.AppConfig.String("whale_path") + dto.Name)
 	for i := 0; i < dto.Chunks; i++ {
-		f, _ := os.OpenFile(dto.Path+strconv.Itoa(i), os.O_RDONLY, os.ModePerm)
+		f, _ := os.OpenFile(beego.AppConfig.String("whale_path")+dto.Id+"/"+strconv.Itoa(i), os.O_RDONLY, os.ModePerm)
 		b, _ := ioutil.ReadAll(f)
 		ab.Write(b)
 		f.Close()
-		os.Remove(dto.Path + strconv.Itoa(i))
+		os.Remove(beego.AppConfig.String("whale_path") + dto.Id + "/" + strconv.Itoa(i))
 	}
-	os.RemoveAll(dto.Path)
+	os.RemoveAll(beego.AppConfig.String("whale_path") + dto.Id + "/")
 	defer ab.Close()
 	this.Resp(0, "success", map[string]interface{}{})
 }
@@ -69,6 +70,15 @@ func (this *FileController) UploadFinish() {
 // @Success 200 {string} logout success
 // @router /check [post]
 func (this *FileController) CheckFile() {
-	fmt.Println(this.GetString("md5"))
-	this.Resp(0, "success", map[string]interface{}{})
+	dto := &entity.CheckFile{}
+	json.Unmarshal(this.Ctx.Input.RequestBody, &dto)
+	if strings.EqualFold(dto.Md5, "46dc080ca248abcad701351964fe8b45") {
+		this.Resp(0, "success", map[string]interface{}{
+			"isExist": true,
+		})
+	} else {
+		this.Resp(0, "success", map[string]interface{}{
+			"isExist": false,
+		})
+	}
 }
