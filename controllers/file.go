@@ -22,6 +22,8 @@ type FileController struct {
 // @Success 200 {string} logout success
 // @router /upload [post]
 func (this *FileController) Upload() {
+	user, _ := this.GetCurrentUser()
+	fmt.Println(user.Id)
 	f, _, err := this.GetFile("file")
 	if err != nil {
 		log.Fatal("getfile err ", err)
@@ -38,6 +40,7 @@ func (this *FileController) Upload() {
 	if err1 != nil {
 		fmt.Println(err1)
 	}
+
 	this.SaveToFile("file", filePath+strconv.Itoa(fileDto.Chunk))
 	this.Resp(0, "success", map[string]interface{}{
 		"data": fileDto,

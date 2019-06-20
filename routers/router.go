@@ -61,7 +61,7 @@ func init() {
 			),
 		),
 		beego.NSNamespace("/file",
-			//beego.NSBefore(FilterAuth),
+			beego.NSBefore(FilterAuth),
 			beego.NSBefore(FinishRouter),
 			beego.NSInclude(
 				&controllers.FileController{},

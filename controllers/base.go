@@ -1,14 +1,18 @@
 package controllers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/validation"
 	"github.com/githinkcn/whale/common"
+	"github.com/githinkcn/whale/config"
+	"github.com/githinkcn/whale/models"
 	"github.com/githinkcn/whale/utils"
 	"reflect"
+	"strconv"
 	"strings"
 )
 
@@ -86,4 +90,18 @@ func (self *BaseController) Fail(errs *common.ControllerError, moreErrInfo ...st
 		errs.Moreinfo += v
 	}
 	self.ServeJSON()
+}
+
+func (this *BaseController) GetCurrentUser() (user models.User, err error) {
+	authorization := strings.TrimSpace(this.Ctx.Request.Header.Get("Authorization"))
+	if authorization == "" {
+		return models.User{}, errors.New("Authorization is empty")
+	}
+	tokenString := strings.TrimSpace(authorization[len("Bearer "):])
+	if claims, isValid, err := utils.ParaseToken(tokenString); err == nil && isValid {
+		fmt.Println(string(config.Cache.Get(strconv.Itoa(claims.Uid)).([]byte)))
+		json.Unmarshal(config.Cache.Get(strconv.Itoa(claims.Uid)).([]byte), &user)
+		return user, nil
+	}
+	return
 }

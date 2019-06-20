@@ -17,11 +17,22 @@ func InitDB() {
 	url := beego.AppConfig.String("mysql_url")
 	db := beego.AppConfig.String("mysql_db")
 	orm.RegisterDriver(DB_DRIVER, orm.DRMySQL)
-	orm.RegisterModelWithPrefix("whale_", new(models.User))
+	orm.RegisterModelWithPrefix("whale_",
+		new(models.User),
+		new(models.File),
+		new(models.UserFile),
+		new(models.Folder),
+		new(models.UserFolder),
+		new(models.UserFolderFile))
 	orm.RegisterDataBase("default", DB_DRIVER,
 		username+":"+password+"@tcp("+url+")/"+db+"?charset=utf8", 30)
 }
 
 const (
-	USER_TABLE = "whale_user"
+	USER_TABLE             = "whale_user"
+	FILE_TABLE             = "whale_file"
+	USER_FILE_TABLE        = "whale_user_file"
+	FOLDER_TABLE           = "whale_folder"
+	USER_FOLDER_TABLE      = "whale_user_folder"
+	USER_FOLDER_FILE_TABLE = "whale_user_folder_file"
 )

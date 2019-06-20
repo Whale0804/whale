@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/githinkcn/whale/common"
 	"github.com/githinkcn/whale/config"
@@ -72,10 +71,12 @@ func (this *LoginController) Login() {
 			"token": token,
 			"user":  user,
 		})
+		jsonUer, _ := json.Marshal(user)
 		//redis 存储 jwt
 		t, _ := strconv.Atoi(beego.AppConfig.String("authTime"))
 		_ = config.Cache.Put("login:"+user.Loginname, token, time.Duration(t)*time.Second)
-		fmt.Println(string(config.Cache.Get("login:" + user.Loginname).([]byte)))
+		_ = config.Cache.Put(strconv.Itoa(user.Id), jsonUer, time.Duration(t)*time.Second)
+		//fmt.Println(string(config.Cache.Get("login:" + user.Loginname).([]byte)))
 	}
 
 }

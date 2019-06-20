@@ -2,7 +2,6 @@ package utils
 
 import (
 	"errors"
-	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/dgrijalva/jwt-go"
 	"time"
@@ -22,7 +21,7 @@ func ParaseToken(authorization string) (*WhaleClaims, bool, error) {
 		return []byte(beego.AppConfig.String("authKey")), nil
 	})
 	if claims, ok := token.Claims.(*WhaleClaims); ok && token.Valid {
-		fmt.Println("claims:", claims)
+		//fmt.Println("claims:", claims)
 		return claims, true, nil
 	}
 	return nil, false, errors.New("token invalid")
