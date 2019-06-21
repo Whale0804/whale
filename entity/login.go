@@ -6,6 +6,6 @@ type LoginRegisterDto struct {
 }
 
 type LoginDto struct {
-	Loginname string
-	Password  string
+	Loginname string `form:"loginname" valid:"Required"`
+	Password  string `form:"password" valid:"Required"`
 }

@@ -8,7 +8,6 @@
 package routers
 
 import (
-	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	"github.com/githinkcn/whale/config"
@@ -27,9 +26,7 @@ func init() {
 				ctx.Output.JSON(map[string]interface{}{"code": 401, "msg": "请登录后访问"}, true, true)
 			}
 			tokenString := strings.TrimSpace(authorization[len("Bearer "):])
-			fmt.Println(tokenString)
 			if userInfo, isValid, err := utils.ParaseToken(tokenString); err == nil && isValid {
-				fmt.Println(userInfo.Uname)
 				if config.Cache.IsExist("login:" + userInfo.Uname) {
 					v := string(config.Cache.Get("login:" + userInfo.Uname).([]byte))
 					if redisUserInfo, isValidRedis, errRedis := utils.ParaseToken(v); errRedis == nil && isValidRedis {

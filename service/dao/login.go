@@ -1,10 +1,11 @@
 package dao
 
 import (
-	"fmt"
+	"github.com/astaxie/beego"
 	"github.com/githinkcn/whale/entity"
 	"github.com/githinkcn/whale/models"
 	"github.com/githinkcn/whale/utils"
+	"os"
 	"strconv"
 )
 
@@ -33,6 +34,9 @@ func (dao *LoginDao) Register(dto *entity.LoginRegisterDto) (id int, err error) 
 	}
 	//插入文件夹信息
 	_, err = o.Insert(folder)
+	if err != nil {
+		return 0, err
+	}
 	//用户文件夹关联
 	uf := &models.UserFolder{
 		Id:       utils.GetId(),
@@ -40,6 +44,9 @@ func (dao *LoginDao) Register(dto *entity.LoginRegisterDto) (id int, err error) 
 		FolderId: folderId,
 	}
 	_, err = o.Insert(uf)
+	if err != nil {
+		return 0, err
+	}
 	//用户问价文件夹文件关联表
 	uff := &models.UserFolderFile{
 		Id:       utils.GetId(),
@@ -49,7 +56,12 @@ func (dao *LoginDao) Register(dto *entity.LoginRegisterDto) (id int, err error) 
 	}
 	_, err = o.Insert(uff)
 	if err != nil {
-		fmt.Println(err)
+		return 0, nil
+	}
+	filePath := beego.AppConfig.String("whale_path") + folder.FolderName + "/"
+	err = os.MkdirAll(filePath, os.ModePerm)
+	if err != nil {
+		return 0, nil
 	}
 	return int(user.Id), nil
 }

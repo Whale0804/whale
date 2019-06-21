@@ -99,7 +99,6 @@ func (this *BaseController) GetCurrentUser() (user models.User, err error) {
 	}
 	tokenString := strings.TrimSpace(authorization[len("Bearer "):])
 	if claims, isValid, err := utils.ParaseToken(tokenString); err == nil && isValid {
-		fmt.Println(string(config.Cache.Get(strconv.Itoa(claims.Uid)).([]byte)))
 		json.Unmarshal(config.Cache.Get(strconv.Itoa(claims.Uid)).([]byte), &user)
 		return user, nil
 	}
